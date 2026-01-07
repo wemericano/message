@@ -61,6 +61,7 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Success bool   `json:"success"`
 	Message string `json:"message"`
+	UserID  int    `json:"user_id"`
 }
 
 // Login 로그인 서비스
@@ -86,6 +87,7 @@ func Login(req *LoginRequest) (*LoginResponse, error) {
 	return &LoginResponse{
 		Success: true,
 		Message: "로그인 성공",
+		UserID:  user.ID,
 	}, nil
 }
 

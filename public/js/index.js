@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // userID를 localStorage에 저장
+                if (data.user_id) {
+                    localStorage.setItem('userID', data.user_id);
+                }
                 showLoading('Login successful! Redirecting...');
                 setTimeout(() => {
                     window.location.href = '/html/chat.html';

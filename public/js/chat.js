@@ -108,8 +108,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 친구 요청 전송
     function sendFriendRequest(toUserID) {
-        // 임시로 fromUserID를 1로 설정 (나중에 세션에서 가져와야 함)
-        const fromUserID = currentUserID || 1;
+        const fromUserID = currentUserID;
+        if (!fromUserID) {
+            alert('로그인이 필요합니다');
+            window.location.href = '/html/index.html';
+            return;
+        }
         
         fetch('/api/friend/request', {
             method: 'POST',
@@ -216,9 +220,16 @@ document.addEventListener('DOMContentLoaded', function() {
         updateNotificationBadge();
     });
     
-    // WebSocket 연결 시작 (임시로 userID 1 사용)
-    // 나중에 로그인 세션에서 가져와야 함
-    currentUserID = 1; // 임시
-    connectWebSocket(currentUserID);
+    // WebSocket 연결 시작 - localStorage에서 userID 가져오기
+    const savedUserID = localStorage.getItem('userID');
+    if (savedUserID) {
+        currentUserID = parseInt(savedUserID, 10);
+        console.log('### Using userID from localStorage:', currentUserID);
+        connectWebSocket(currentUserID);
+    } else {
+        console.error('### No userID found in localStorage. Please login again.');
+        // 로그인 페이지로 리다이렉트
+        window.location.href = '/html/index.html';
+    }
 });
 
