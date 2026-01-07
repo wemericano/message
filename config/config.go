@@ -20,6 +20,9 @@ func Init() error {
 }
 
 func GetPort() string {
+	if port := os.Getenv("SV_PORT"); port != "" {
+		return port
+	}
 	if port := os.Getenv("PORT"); port != "" {
 		return port
 	}

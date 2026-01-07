@@ -24,11 +24,24 @@ func initDB() {
 	dbname := config.GetDBName()
 
 	// 디버깅: 설정 값 확인 (비밀번호 제외)
-	log.Printf("### DB Config - Host: %s, Port: %s, User: %s, DB: %s", host, port, user, dbname)
+	log.Printf("### DB Config - Host: [%s], Port: [%s], User: [%s], DB: [%s], Password length: [%d]",
+		host, port, user, dbname, len(password))
 
-	// 빈 값 체크
-	if host == "" || user == "" || password == "" || dbname == "" {
-		log.Fatalf("### Database configuration is incomplete. Host: %s, User: %s, DB: %s", host, user, dbname)
+	// 빈 값 체크 및 상세 로그
+	if host == "" {
+		log.Fatalf("### DB_HOST is empty")
+	}
+	if port == "" {
+		log.Fatalf("### DB_PORT is empty")
+	}
+	if user == "" {
+		log.Fatalf("### DB_USER is empty")
+	}
+	if password == "" {
+		log.Fatalf("### DB_PASSWORD is empty")
+	}
+	if dbname == "" {
+		log.Fatalf("### DB_NAME is empty")
 	}
 
 	// 비밀번호에 특수문자가 있을 수 있으므로 URL 인코딩
