@@ -66,6 +66,9 @@ func GetDBPassword() string {
 	if password := os.Getenv("DB_PASSWORD"); password != "" {
 		return password
 	}
+	if password := os.Getenv("DB_PASS"); password != "" {
+		return password
+	}
 	if cfg != nil {
 		return cfg.Section("database").Key("password").String()
 	}
