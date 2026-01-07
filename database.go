@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"net/url"
 	"time"
 
 	"messanger/config"
@@ -44,12 +43,9 @@ func initDB() {
 		log.Fatalf("### DB_NAME is empty")
 	}
 
-	// 비밀번호에 특수문자가 있을 수 있으므로 URL 인코딩
-	encodedPassword := url.QueryEscape(password)
-
-	// 연결 문자열 형식 개선
+	// 연결 문자열 형식 (비밀번호는 그대로 사용, SQL Server 드라이버가 자동 처리)
 	connString := fmt.Sprintf("server=%s;port=%s;user id=%s;password=%s;database=%s;encrypt=disable;connection timeout=30",
-		host, port, user, encodedPassword, dbname)
+		host, port, user, password, dbname)
 
 	log.Printf("### Attempting to connect to database...")
 
