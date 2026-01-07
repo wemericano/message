@@ -12,7 +12,9 @@ import (
 	"syscall"
 	"time"
 
+	"messanger/api"
 	"messanger/config"
+	"messanger/dbcall"
 )
 
 const PID_FILE = "server.pid"
@@ -28,6 +30,9 @@ func main() {
 
 	// Database Init
 	initDB()
+
+	// DB 연결을 dbcall에 전달
+	dbcall.InitDB(db)
 
 	// WebSocket Init
 	initWebSocket()
@@ -60,6 +65,9 @@ func initServer() {
 	// 정적 파일 서빙
 	mux.Handle("/html/", http.StripPrefix("/html/", http.FileServer(http.Dir("public/html"))))
 	mux.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("public/js"))))
+
+	// API 라우트 설정
+	api.SetupRoutes(mux)
 
 	mux.HandleFunc("/", rootHandler)
 	mux.HandleFunc("/ws", handleWebSocket)
