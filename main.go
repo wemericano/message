@@ -15,6 +15,7 @@ import (
 	"messanger/api"
 	"messanger/config"
 	"messanger/dbcall"
+	"messanger/handler"
 )
 
 const PID_FILE = "server.pid"
@@ -36,6 +37,9 @@ func main() {
 
 	// WebSocket Init
 	initWebSocket()
+
+	// WebSocket 알림 전송 함수를 handler에 연결
+	handler.SendNotificationToUser = SendToUser
 
 	// Server Init
 	initServer()

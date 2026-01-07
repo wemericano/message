@@ -29,3 +29,23 @@ func GetUserByUsername(username string) (*model.User, error) {
 	}
 	return user, err
 }
+
+// SearchUsersByName 이름으로 사용자 검색
+func SearchUsersByName(name string) ([]*model.User, error) {
+	query := `SELECT id, username, password, name, email FROM users WHERE name LIKE @p1`
+	rows, err := db.Query(query, "%"+name+"%")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*model.User
+	for rows.Next() {
+		user := &model.User{}
+		if err := rows.Scan(&user.ID, &user.Username, &user.Password, &user.Name, &user.Email); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, rows.Err()
+}
