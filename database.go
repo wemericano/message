@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
 	"log"
+	"net/url"
+	"time"
 
 	"messanger/config"
 
@@ -19,7 +23,12 @@ func initDB() {
 	password := config.GetDBPassword()
 	dbname := config.GetDBName()
 
-	connString := "server=" + host + ";port=" + port + ";user id=" + user + ";password=" + password + ";database=" + dbname + ";encrypt=disable"
+	// 비밀번호에 특수문자가 있을 수 있으므로 URL 인코딩
+	encodedPassword := url.QueryEscape(password)
+
+	// 연결 문자열 형식 개선
+	connString := fmt.Sprintf("server=%s;port=%s;user id=%s;password=%s;database=%s;encrypt=disable;connection timeout=30",
+		host, port, user, encodedPassword, dbname)
 
 	var err error
 	db, err = sql.Open("sqlserver", connString)
@@ -27,7 +36,16 @@ func initDB() {
 		log.Fatalf("### Failed to open database: %v", err)
 	}
 
-	if err = db.Ping(); err != nil {
+	// 연결 풀 설정
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(5)
+	db.SetConnMaxLifetime(5 * time.Minute)
+
+	// 연결 테스트
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err = db.PingContext(ctx); err != nil {
 		log.Fatalf("### Failed to connect to database: %v", err)
 	}
 
